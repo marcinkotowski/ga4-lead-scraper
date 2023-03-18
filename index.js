@@ -1,11 +1,12 @@
 import puppeteer from "puppeteer";
+import { scrollAndRemove, InfiniteScrollItems } from "./utils/scroll.js";
 
 (async () => {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
 
   await page.goto(
-    "https://www.google.pl/maps/search/sklep+z+zabawkami/@52.4069751,16.9182937,13z"
+    "https://www.google.pl/maps/search/szko%C5%82a+licuem+jarocin/@51.9598876,17.4644428,13z"
   );
 
   //Accept google cookies
@@ -19,14 +20,19 @@ import puppeteer from "puppeteer";
   await page.setViewport({ width: 1300, height: 1024 });
 
   // Wait to load google maps
-  await page.waitForSelector("input#searchboxinput");
+  // await page.waitForSelector("input#searchboxinput");
 
   // Scrap first lead results
-  const places = await page.$$("div[role=article]");
-  for (const lead of places) {
-    const nameLead = await page.evaluate((el) => el.ariaLabel, lead);
-    console.log(nameLead);
-  }
+  // const places = await page.$$("div[role=article]");
+
+  // if (places && places.length) {
+  //   for (const lead of places) {
+  //     const nameLead = await page.evaluate((el) => el.ariaLabel, lead);
+  //     console.log(nameLead);
+  //   }
+  // }
+
+  await InfiniteScrollItems("div[role=feed]", "div[role=article]", page);
 
   await browser.close();
 })();
