@@ -1,13 +1,17 @@
 import puppeteer from "puppeteer";
 import { scrollAndRemove, InfiniteScrollItems } from "./utils/scroll.js";
 
+import { interatorBusiness } from "./utils/interatorBusiness.js";
+
 (async () => {
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({
+    headless: false,
+    executablePath:
+      "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  });
   const page = await browser.newPage();
 
-  await page.goto(
-    "https://www.google.pl/maps/search/szko%C5%82a+licuem+jarocin/@51.9598876,17.4644428,13z"
-  );
+  await page.goto("https://www.google.pl/maps/");
 
   //Accept google cookies
   const [button] = await page.$x(
@@ -19,20 +23,19 @@ import { scrollAndRemove, InfiniteScrollItems } from "./utils/scroll.js";
   // Set screen size
   await page.setViewport({ width: 1300, height: 1024 });
 
-  // Wait to load google maps
-  // await page.waitForSelector("input#searchboxinput");
+  // Insert search argument
+  const searchInput = await page.waitForSelector("input#searchboxinput");
+  await searchInput.type(process.argv.slice(2));
 
-  // Scrap first lead results
-  // const places = await page.$$("div[role=article]");
+  // Search
+  const searchButton = await page.waitForSelector(
+    "button#searchbox-searchbutton"
+  );
+  await searchButton.click();
 
-  // if (places && places.length) {
-  //   for (const lead of places) {
-  //     const nameLead = await page.evaluate((el) => el.ariaLabel, lead);
-  //     console.log(nameLead);
-  //   }
-  // }
+  await InfiniteScrollItems("div[role=feed]", page);
 
-  await InfiniteScrollItems("div[role=feed]", "div[role=article]", page);
+  await interatorBusiness("div[role=article]", page);
 
   await browser.close();
 })();

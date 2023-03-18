@@ -17,11 +17,7 @@ export async function scrollAndRemove(selector, page) {
   }
 }
 
-export async function InfiniteScrollItems(
-  scrollableSelector,
-  scrapSelector,
-  page
-) {
+export async function InfiniteScrollItems(scrollableSelector, page) {
   try {
     await page.waitForSelector(scrollableSelector);
     const divHandle = await page.$(scrollableSelector);
@@ -30,8 +26,6 @@ export async function InfiniteScrollItems(
     let currentHeight = await page.evaluate((div) => {
       return div.scrollHeight;
     }, divHandle);
-
-    let itemsList = [];
 
     while (previousHeight !== currentHeight) {
       previousHeight = currentHeight;
@@ -48,22 +42,8 @@ export async function InfiniteScrollItems(
       // Wait for fetch new results
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Fetch all search result business
-      const newItems = await page.evaluate((scrapSelector) => {
-        const items = Array.from(document.querySelectorAll(scrapSelector));
-        return items.map((item) => item.ariaLabel);
-      }, scrapSelector);
-
-      // Add business to businessList without duplicate
-      newItems.forEach((item) => {
-        if (!itemsList.includes(item)) {
-          itemsList.push(item);
-        }
-      });
-
       // Update current height of div after fetch new results
       currentHeight = await page.evaluate((div) => div.scrollHeight, divHandle);
-      console.log(itemsList);
     }
   } catch (e) {
     console.log(e);
