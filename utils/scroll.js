@@ -1,4 +1,4 @@
-import { TimeoutError } from "puppeteer";
+import { TimeoutError } from "puppeteer-core";
 
 export async function scrollAndRemove(selector, page) {
   // Wait for first google maps results

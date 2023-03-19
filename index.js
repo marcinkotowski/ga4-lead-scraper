@@ -1,41 +1,40 @@
-import puppeteer from "puppeteer";
-import { scrollAndRemove, InfiniteScrollItems } from "./utils/scroll.js";
-
+import puppeteer from "uppeteer-core";
+import getBrowserWSEndpoint from "./utils/getBrowserWSEndpoint.js";
+import { InfiniteScrollItems } from "./utils/scroll.js";
 import { interatorBusiness } from "./utils/interatorBusiness.js";
+import { indentifyTabs } from "./utils/identifyTabs.js";
 
 (async () => {
-  const browser = await puppeteer.launch({
-    headless: false,
-    executablePath:
-      "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  const browser = await puppeteer.connect({
+    browserWSEndpoint: await getBrowserWSEndpoint(),
   });
-  const page = await browser.newPage();
 
-  await page.goto("https://www.google.pl/maps/");
+  const pages = await browser.pages();
 
-  //Accept google cookies
-  const [button] = await page.$x(
-    "//button[contains(., 'Zaakceptuj wszystko')]"
-  );
-  if (!button) throw new Error("button not found");
-  await button.click();
+  const { googleMaps, googleTagAssistant } = await indentifyTabs(pages);
 
   // Set screen size
-  await page.setViewport({ width: 1300, height: 1024 });
+  await googleMaps.setViewport({ width: 1300, height: 1024 });
+  await googleTagAssistant.setViewport({ width: 1300, height: 1024 });
+
+  // googleMaps.bringToFront();
+  googleTagAssistant.bringToFront();
+
+  await new Promise((resolve) => setTimeout(resolve, 20000));
 
   // Insert search argument
-  const searchInput = await page.waitForSelector("input#searchboxinput");
+  const searchInput = await googleMaps.waitForSelector("input#searchboxinput");
   await searchInput.type(process.argv.slice(2));
 
   // Search
-  const searchButton = await page.waitForSelector(
+  const searchButton = await googleMaps.waitForSelector(
     "button#searchbox-searchbutton"
   );
   await searchButton.click();
 
-  await InfiniteScrollItems("div[role=feed]", page);
+  await InfiniteScrollItems("div[role=feed]", googleMaps);
 
-  await interatorBusiness("div[role=article]", page);
+  await interatorBusiness("div[role=article]", googleMaps);
 
   await browser.close();
 })();

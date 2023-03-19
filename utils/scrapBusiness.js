@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 
 export async function scrapBusiness(business, page) {
   const DataList = [];

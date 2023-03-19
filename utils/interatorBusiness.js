@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 import { scrapBusiness } from "./scrapBusiness.js";
 
 export async function interatorBusiness(scrapSelector, page) {
