@@ -9,7 +9,7 @@ export async function iteratorBusinesses(scrapSelector, page) {
     await business.click();
 
     // Delay of click next result
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     let scrappedBusiness = await scrapBusiness(business, page);
     bussinessList.push(scrappedBusiness);

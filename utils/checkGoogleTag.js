@@ -1,7 +1,8 @@
 export async function checkGA4(website, browser) {
-  const page = browser.newPage();
+  const page = await browser.newPage();
 
-  await page.goto(website);
+  // Website with https also works
+  await page.goto(`http://${website}`);
 
   const hasGA4 = await page.evaluate(() => {
     const scripts = Array.from(document.querySelectorAll("script[src]"));
