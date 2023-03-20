@@ -1,5 +1,4 @@
 import puppeteer from "puppeteer-core";
-import getBrowserWSEndpoint from "./utils/getBrowserWSEndpoint.js";
 import { infiniteScrollItems } from "./utils/scroll.js";
 import { iteratorBusinesses } from "./utils/iteratorBusinesses.js";
 import { checkGA4 } from "./utils/checkGoogleTag.js";
