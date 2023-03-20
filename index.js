@@ -31,8 +31,10 @@ dotenv.config();
 
     await infiniteScrollItems("div[role=feed]", googleMaps);
 
-    const businessList =
-      (await iteratorBusinesses("div[role=article]", googleMaps)) || [];
+    const businessList = await iteratorBusinesses(
+      "div[role=article]",
+      googleMaps
+    );
 
     let leadList = [];
 
@@ -43,8 +45,6 @@ dotenv.config();
         leadList.push(business);
       }
     }
-
-    console.log(leadList);
 
     if (leadList) {
       await convertJsonToExcel(leadList, arg);

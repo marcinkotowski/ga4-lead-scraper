@@ -9,10 +9,14 @@ export async function iteratorBusinesses(scrapSelector, page) {
     await business.click();
 
     // Delay of click next result
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    let scrappedBusiness = await scrapBusiness(business, page);
-    bussinessList.push(scrappedBusiness);
+    const scrappedBusiness = await scrapBusiness(business, page);
+
+    // scrappedBusiness is undefined when it doesn't have a website
+    if (scrappedBusiness !== undefined) {
+      bussinessList.push(scrappedBusiness);
+    }
   }
 
   return bussinessList;
