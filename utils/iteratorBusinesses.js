@@ -1,19 +1,24 @@
 import puppeteer from "puppeteer-core";
 import { scrapBusiness } from "./scrapBusiness.js";
 
-export async function interatorBusiness(scrapSelector, page) {
-  const businessList = await page.$$(scrapSelector);
+export async function iteratorBusinesses(scrapSelector, page) {
+  let bussinessList = [];
+  const businessContainer = await page.$$(scrapSelector);
 
-  for (const business of businessList) {
+  for (const business of businessContainer) {
     await business.click();
+
     // Delay of click next result
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    await scrapBusiness(business, page);
+    let scrappedBusiness = await scrapBusiness(business, page);
+    bussinessList.push(scrappedBusiness);
   }
+
+  return bussinessList;
 }
 
-export async function interatorBusinessOnEveryScroll(itemsList) {
+export async function iteratorBusinessesOnEveryScroll(itemsList) {
   // Fetch all search result business
   const businessList = await page.evaluate((scrapSelector) => {
     const items = Array.from(document.querySelectorAll(scrapSelector));

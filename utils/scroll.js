@@ -17,7 +17,7 @@ export async function scrollAndRemove(selector, page) {
   }
 }
 
-export async function InfiniteScrollItems(scrollableSelector, page) {
+export async function infiniteScrollItems(scrollableSelector, page) {
   try {
     await page.waitForSelector(scrollableSelector);
     const divHandle = await page.$(scrollableSelector);
