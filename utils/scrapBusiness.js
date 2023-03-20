@@ -14,7 +14,11 @@ export async function scrapBusiness(business, page) {
   );
 
   // Validate website
-  if (website.includes(".")) {
+  if (
+    website.includes(".") &&
+    website.includes("facebook.com") &&
+    website.includes("business.site")
+  ) {
     const phone = await page.evaluate(
       () => document.querySelectorAll("button div.fontBodyMedium")[1].innerText
     );
