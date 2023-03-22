@@ -46,7 +46,7 @@ dotenv.config();
       }
     }
 
-    if (leadList) {
+    if (leadList.length > 0) {
       await convertJsonToExcel(leadList, arg);
     }
 
