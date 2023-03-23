@@ -10,8 +10,8 @@ export async function iteratorBusinesses(scrapSelector, page) {
     for (const business of businessContainer) {
       await business.click();
 
-      // Delay of click next result
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Wait for business loading
+      await page.waitForNavigation({ waitUntil: "networkidle0" });
 
       const scrappedBusiness = await scrapBusiness(business, page);
 
