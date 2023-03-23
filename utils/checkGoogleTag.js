@@ -5,8 +5,7 @@ export async function checkGA4(website, browser) {
     const page = await browser.newPage();
 
     await page.goto(`http://${website}`, {
-      waitUntil: "domcontentloaded",
-      timeout: 10000,
+      waitUntil: "load",
     });
 
     const hasGA4 = await page.evaluate(() => {
@@ -21,8 +20,12 @@ export async function checkGA4(website, browser) {
 
     return hasGA4;
   } catch (err) {
-    console.error(`${website} generate error: ${err}`);
-    // True means that it's not a lead
-    return true;
+    if (err instanceof TimeoutError) {
+      console.error(`${website} took too long to load`);
+    } else {
+      console.error(`${website} generate error: ${err}`);
+      // True means that it's not a lead
+      return true;
+    }
   }
 }
