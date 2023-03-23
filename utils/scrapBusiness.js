@@ -13,15 +13,17 @@ export async function scrapBusiness(business, page) {
       business
     );
 
-    const website = await page.evaluate(
-      () => document.querySelector("a div.fontBodyMedium")?.innerText
-    );
+    const website =
+      (await page.evaluate(
+        () => document.querySelector("a div.fontBodyMedium")?.innerText
+      )) || "";
 
     if (website.includes(".") && !website.includes("facebook.com")) {
-      const phone = await page.evaluate(
-        () =>
-          document.querySelectorAll("button div.fontBodyMedium")[1]?.innerText
-      );
+      const phone =
+        (await page.evaluate(
+          () =>
+            document.querySelectorAll("button div.fontBodyMedium")[1]?.innerText
+        )) || "";
 
       BusinessData.name = name;
       BusinessData.website = website;
