@@ -1,22 +1,5 @@
 import { TimeoutError } from "puppeteer-core";
 
-export async function scrollAndRemove(selector, page) {
-  // Wait for first google maps results
-  try {
-    await page.waitForSelector(selector, { timeout: 5000 });
-    const divHandle = await page.$(selector);
-    await page.evaluate((el) => el.scrollIntoView(), divHandle);
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    await page.evaluate((el) => el.remove(), divHandle);
-
-    return scrollAndRemove(selector, page);
-  } catch (e) {
-    if (e instanceof TimeoutError) {
-      console.log("Scrapped all search results");
-    }
-  }
-}
-
 export async function infiniteScrollItems(scrollableSelector, page) {
   try {
     await page.waitForSelector(scrollableSelector);
@@ -39,13 +22,30 @@ export async function infiniteScrollItems(scrollableSelector, page) {
         currentHeight
       );
 
-      // Wait for fetch new results
+      // Wait for new businesses fetching
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Update current height of div after fetch new results
       currentHeight = await page.evaluate((div) => div.scrollHeight, divHandle);
     }
+  } catch (err) {
+    console.error(`Error in infiniteScrollItems function: ${err}`);
+  }
+}
+
+export async function scrollAndRemove(selector, page) {
+  // Wait for first google maps results
+  try {
+    await page.waitForSelector(selector, { timeout: 5000 });
+    const divHandle = await page.$(selector);
+    await page.evaluate((el) => el.scrollIntoView(), divHandle);
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    await page.evaluate((el) => el.remove(), divHandle);
+
+    return scrollAndRemove(selector, page);
   } catch (e) {
-    console.log(e);
+    if (e instanceof TimeoutError) {
+      console.log("Scrapped all search results");
+    }
   }
 }

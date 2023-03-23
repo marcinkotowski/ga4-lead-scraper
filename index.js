@@ -11,47 +11,51 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 (async () => {
-  const browser = await puppeteer.launch({
-    headless: false,
-    executablePath: process.env.EXECUTABLEPATH,
-  });
+  try {
+    const browser = await puppeteer.launch({
+      headless: false,
+      executablePath: process.env.EXECUTABLEPATH,
+    });
 
-  const googleMaps = await browser.newPage();
-  await googleMaps.goto("https://www.google.pl/maps/");
+    const googleMaps = await browser.newPage();
+    await googleMaps.goto("https://www.google.pl/maps/");
 
-  // Set screen size
-  await googleMaps.setViewport({ width: 1300, height: 1024 });
+    // Set screen size
+    await googleMaps.setViewport({ width: 1300, height: 1024 });
 
-  await cancelCookies(googleMaps);
+    await cancelCookies(googleMaps);
 
-  const args = process.argv.slice(2) || [];
+    const args = process.argv.slice(2) || [];
 
-  for (const arg of args) {
-    await searchBusiness(arg, googleMaps);
+    for (const arg of args) {
+      await searchBusiness(arg, googleMaps);
 
-    await infiniteScrollItems("div[role=feed]", googleMaps);
+      await infiniteScrollItems("div[role=feed]", googleMaps);
 
-    const businessList = await iteratorBusinesses(
-      "div[role=article]",
-      googleMaps
-    );
+      const businessList = await iteratorBusinesses(
+        "div[role=article]",
+        googleMaps
+      );
 
-    let leadList = [];
+      let leadList = [];
 
-    for (const business of businessList) {
-      const hasGA4 = await checkGA4(business.website, browser);
+      for (const business of businessList) {
+        const hasGA4 = await checkGA4(business.website, browser);
 
-      if (!hasGA4) {
-        leadList.push(business);
+        if (!hasGA4) {
+          leadList.push(business);
+        }
       }
+
+      if (leadList.length > 0) {
+        await convertJsonToExcel(leadList, arg);
+      }
+
+      googleMaps.bringToFront();
     }
 
-    if (leadList.length > 0) {
-      await convertJsonToExcel(leadList, arg);
-    }
-
-    googleMaps.bringToFront();
+    await browser.close();
+  } catch (err) {
+    console.error(`Error in main function: ${err}`);
   }
-
-  await browser.close();
 })();

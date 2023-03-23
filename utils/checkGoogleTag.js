@@ -21,7 +21,7 @@ export async function checkGA4(website, browser) {
 
     return hasGA4;
   } catch (err) {
-    console.log(`${website} generate error: ${err}`);
+    console.error(`${website} generate error: ${err}`);
     // True means that it's not a lead
     return true;
   }
