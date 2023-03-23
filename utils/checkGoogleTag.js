@@ -5,7 +5,7 @@ export async function checkGA4(website, browser) {
     const page = await browser.newPage();
 
     await page.goto(`http://${website}`, {
-      waitUntil: "load",
+      waitUntil: "networkidle0",
     });
 
     const hasGA4 = await page.evaluate(() => {
