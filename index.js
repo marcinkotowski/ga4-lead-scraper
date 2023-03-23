@@ -48,7 +48,10 @@ dotenv.config();
       }
 
       if (leadList.length > 0) {
+        console.log(`Leads from the "${arg}" search result have been saved`);
         await convertJsonToExcel(leadList, arg);
+      } else {
+        console.log(`There are no leads for the "${arg}" search results`);
       }
 
       googleMaps.bringToFront();
