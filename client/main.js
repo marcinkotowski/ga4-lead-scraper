@@ -1,12 +1,22 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, Menu } = require("electron");
 const path = require("path");
+
+const isDev = process.env.NODE_ENV !== "development";
 
 function createWindow() {
   const win = new BrowserWindow({
     title: "Google maps lead scrapper",
-    width: 500,
-    height: 600,
+    width: isDev ? 1000 : 500,
+    height: 500,
   });
+
+  // Disable menu
+  Menu.setApplicationMenu(null);
+
+  // Open devtools if in dev env
+  if (isDev) {
+    win.webContents.openDevTools();
+  }
 
   win.loadFile(path.join(__dirname, "./renderer/index.html"));
 }

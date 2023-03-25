@@ -8,9 +8,80 @@
       http-equiv="Content-Security-Policy"
       content="script-src 'self' 'unsafe-inline';"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="./css/style.css" />
     <title>Google maps lead scrapper</title>
   </head>
   <body>
-    <h1>Hello world</h1>
+    <header>
+      <h1>Generate leads</h1>
+      <h2>by scraping <span>Google Maps</span></h2>
+    </header>
+    <div id="search-container">
+      <div class="search-key">
+        <input
+          type="text"
+          name="input-0"
+          id="input-0"
+          placeholder="Business name and location"
+        />
+        <button id="add"><i class="fa-solid fa-plus fa-sm"></i></button>
+      </div>
+
+      <!-- <div class="search-key">
+        <input
+          type="text"
+          name="input-1"
+          id="input-1"
+          placeholder="Business name and location"
+        />
+        <button id="remove">
+          <i class="fa-regular fa-trash-can fa-sm"></i>
+        </button>
+      </div> -->
+
+      <!-- <div class="search-key">
+        <input
+          type="text"
+          name="input-1"
+          id="input-1"
+          placeholder="Business name and location"
+        />
+        <button id="in-progress">
+            <i class="fa-solid fa-ellipsis fa-fade fa-sm"></i>
+        </button>
+      </div> -->
+
+      <!-- <div class="search-key">
+        <input
+          type="text"
+          name="input-1"
+          id="input-1"
+          placeholder="Business name and location"
+        />
+        <button id="error">
+             <i class="fa-solid fa-exclamation fa-sm"></i>
+ 
+        </button>
+      </div> -->
+
+      <!-- <div class="search-key">
+        <input
+          type="text"
+          name="input-1"
+          id="input-1"
+          placeholder="Business name and location"
+        />
+        <button id="success">
+            <i class="fa-solid fa-check fa-sm"></i>
+        </button>
+      </div> -->
+      </div>
+    </div>
+
+    <button id="run">Run scrapper</button>
   </body>
 </html>
