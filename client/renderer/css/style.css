@@ -38,7 +38,7 @@ h2 span {
   gap: 1rem;
   padding: 1px 1rem;
   border-radius: 4px;
-  max-height: 26.3vh;
+  max-height: 26.4vh;
   overflow-y: overlay;
 }
 
@@ -85,6 +85,10 @@ h2 span {
 
 button:hover {
   cursor: pointer;
+}
+
+button i {
+  pointer-events: none;
 }
 
 #add {
