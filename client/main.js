@@ -8,6 +8,10 @@ function createWindow() {
     title: "Google maps lead scrapper",
     width: isDev ? 1000 : 500,
     height: 500,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
   });
 
   // Disable menu
