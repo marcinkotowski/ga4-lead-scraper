@@ -19,9 +19,9 @@ searchContainer.addEventListener("click", (event) => {
 function runScrapingBot() {
   const inputs = Array.from(document.querySelectorAll(".search-key input"));
 
-  const args = inputs.map((input) => input.value);
+  const args = inputs.map((input) => `${input.value}`);
 
-  const scrapingBot = spawn("node", ["../bot/index.js", args], {
+  const scrapingBot = spawn("node", ["../bot/index.js", ...args], {
     cwd: "../bot/",
   });
 
@@ -41,10 +41,10 @@ function runScrapingBot() {
   });
 
   scrapingBot.stderr.on("data", (data) => {
-    const splitMessage = Buffer.from(data).toString("utf8").split(" ");
-    console.log(`splitMessage: ${splitMessage}`);
-    const nameFunction = splitMessage[2];
-    console.log(`nameFunction: ${nameFunction}`);
+    const splitMessage = Buffer.from(data).toString("utf8").split("\n");
+    const arg = splitMessage[0].split('"')[1];
+    const error = splitMessage[1];
+    console.log(arg, error);
   });
 
   // scrapingBot.on("close", (code) => {

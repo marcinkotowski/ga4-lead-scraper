@@ -6,6 +6,6 @@ export default async function getBrowserWSEndpoint() {
     const { webSocketDebuggerUrl } = response.data;
     return webSocketDebuggerUrl;
   } catch (err) {
-    console.error(`Error in getBrowserWSEndpoint function: ${err}`);
+    throw new Error(`Error in getBrowserWSEndpoint function: ${err}`);
   }
 }

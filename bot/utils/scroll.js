@@ -29,7 +29,7 @@ export async function infiniteScrollItems(scrollableSelector, page) {
       currentHeight = await page.evaluate((div) => div.scrollHeight, divHandle);
     }
   } catch (err) {
-    console.error(`Error in infiniteScrollItems function: ${err}`);
+    throw new Error(`Error in infiniteScrollItems function: ${err}`);
   }
 }
 

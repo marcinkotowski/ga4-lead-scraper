@@ -12,6 +12,6 @@ export async function cancelCookies(page) {
       waitUntil: "networkidle0",
     });
   } catch (err) {
-    console.error(`Error in cancelCookies function: ${err}`);
+    throw new Error(`Error in cancelCookies function: ${err}`);
   }
 }

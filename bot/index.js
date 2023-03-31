@@ -11,23 +11,23 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 (async () => {
-  try {
-    const browser = await puppeteer.launch({
-      headless: false,
-      executablePath: process.env.EXECUTABLEPATH,
-    });
+  const browser = await puppeteer.launch({
+    headless: false,
+    executablePath: process.env.EXECUTABLEPATH,
+  });
 
-    const googleMaps = await browser.newPage();
-    await googleMaps.goto("https://www.google.pl/maps/");
+  const googleMaps = await browser.newPage();
+  await googleMaps.goto("https://www.google.pl/maps/");
 
-    // Set screen size
-    await googleMaps.setViewport({ width: 1300, height: 1024 });
+  // Set screen size
+  await googleMaps.setViewport({ width: 1300, height: 1024 });
 
-    await cancelCookies(googleMaps);
+  await cancelCookies(googleMaps);
 
-    const args = process.argv.slice(2) || [];
+  const args = process.argv.slice(2) || [];
 
-    for (const arg of args) {
+  for (const arg of args) {
+    try {
       await searchBusiness(arg, googleMaps);
 
       await infiniteScrollItems("div[role=feed]", googleMaps);
@@ -47,18 +47,15 @@ dotenv.config();
         }
       }
 
-      if (leadList.length > 0) {
-        console.log(`Leads from the "${arg}" search result have been saved`);
-        await convertJsonToExcel(leadList, arg);
-      } else {
-        console.log(`There are no leads for the "${arg}" search results`);
-      }
+      if (leadList.length > 0) await convertJsonToExcel(leadList, arg);
+
+      console.log(`"${leadList.length}" leads from the "${arg}" search result`);
 
       googleMaps.bringToFront();
+    } catch (err) {
+      console.error(`Failure scraping "${arg}" search result,\n ${err}`);
     }
-
-    await browser.close();
-  } catch (err) {
-    console.error(`Error in main function: ${err}`);
   }
+
+  await browser.close();
 })();

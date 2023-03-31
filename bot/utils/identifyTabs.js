@@ -18,6 +18,6 @@ export async function indentifyTabs(pages) {
       googleTagAssistant: pages[indexGoogleTagAssistant],
     };
   } catch (err) {
-    console.error(`Error in indentifyTabs function: ${err}`);
+    throw new Error(`Error in indentifyTabs function: ${err}`);
   }
 }

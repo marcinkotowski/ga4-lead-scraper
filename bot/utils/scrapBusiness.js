@@ -36,6 +36,6 @@ export async function scrapBusiness(business, page) {
       return BusinessData;
     }
   } catch (err) {
-    console.error(`Error in scrapBusiness function: ${err}`);
+    throw new Error(`Error in scrapBusiness function: ${err}`);
   }
 }

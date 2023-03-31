@@ -21,7 +21,7 @@ export async function iteratorBusinesses(scrapSelector, page) {
       }
     }
   } catch (err) {
-    console.error(`Error in iteratorBusinesses function: ${err}`);
+    throw new Error(`Error in iteratorBusinesses function: ${err}`);
   } finally {
     return bussinessList;
   }
@@ -44,6 +44,8 @@ export async function iteratorBusinessesOnEveryScroll(itemsList) {
 
     return itemsList;
   } catch (err) {
-    console.error(`Error in iteratorBusinessesOnEveryScroll function: ${err}`);
+    throw new Error(
+      `Error in iteratorBusinessesOnEveryScroll function: ${err}`
+    );
   }
 }

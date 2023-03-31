@@ -14,6 +14,6 @@ export async function searchBusiness(arg, page) {
 
     await searchButton.click();
   } catch (err) {
-    console.error(`Error in searchBusiness function: ${err}`);
+    throw new Error(`Error in searchBusiness function: ${err}`);
   }
 }
