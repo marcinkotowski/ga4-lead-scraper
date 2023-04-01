@@ -13,6 +13,10 @@ export async function searchBusiness(arg, page) {
     const searchButton = await page.$("button#searchbox-searchbutton");
 
     await searchButton.click();
+
+    await page.waitForNavigation({
+      waitUntil: "networkidle0",
+    });
   } catch (err) {
     throw new Error(`Error in searchBusiness function: ${err}`);
   }
