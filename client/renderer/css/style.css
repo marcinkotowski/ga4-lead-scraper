@@ -2,6 +2,7 @@
 
 body {
   font-family: "Raleway", sans-serif;
+  font-feature-settings: "lnum" 1;
   height: 100vh;
   margin: 0;
   background-color: #1f2229;
@@ -38,7 +39,7 @@ h2 span {
   gap: 1rem;
   padding: 1px 1rem;
   border-radius: 4px;
-  max-height: 26.4vh;
+  max-height: 36.3vh;
   overflow-y: overlay;
 }
 
@@ -99,10 +100,13 @@ button i {
   background-color: #d84a38;
 }
 
-#in-progress {
+#in-progress,
+#empty {
   background-color: white;
 }
 
+#success:hover,
+#error:hover,
 #in-progress:hover {
   cursor: default;
 }

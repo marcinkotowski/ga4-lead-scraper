@@ -17,11 +17,27 @@ searchContainer.addEventListener("click", (event) => {
 });
 
 function runScrapingBot() {
-  const inputs = Array.from(document.querySelectorAll(".search-key input"));
+  const searchKeys = Array.from(document.querySelectorAll(".search-key"));
 
-  const args = inputs.map((input) => `${input.value}`);
+  let inputsValue = [];
+  let buttons = [];
+  let icons = [];
+  let indexOfArg = 0;
 
-  const scrapingBot = spawn("node", ["../bot/index.js", ...args], {
+  searchKeys.forEach((searchKey) => {
+    const inputValue = searchKey.querySelector("input").value;
+    const button = searchKey.querySelector("button");
+    const icon = searchKey.querySelector("i");
+
+    button.id = "in-progress";
+    icon.className = "fa-solid fa-ellipsis fa-fade fa-sm";
+
+    inputsValue.push(inputValue);
+    buttons.push(button);
+    icons.push(icon);
+  });
+
+  const scrapingBot = spawn("node", ["../bot/index.js", ...inputsValue], {
     cwd: "../bot/",
   });
 
@@ -31,10 +47,14 @@ function runScrapingBot() {
     const searchKey = splitMessage[3];
 
     if (countLeads > 0) {
-      // succes
+      buttons[indexOfArg].id = "success";
+      icons[indexOfArg].className = "fa-solid fa-check fa-sm";
     } else {
-      // empty
+      buttons[indexOfArg].id = "empty";
+      icons[indexOfArg].className = "fa-solid fa-shop-slash fa-sm";
     }
+
+    indexOfArg++;
 
     console.log(`countLeads: ${countLeads}`);
     console.log(`searchKey: ${searchKey}`);
@@ -43,13 +63,25 @@ function runScrapingBot() {
   scrapingBot.stderr.on("data", (data) => {
     const splitMessage = Buffer.from(data).toString("utf8").split("\n");
     const arg = splitMessage[0].split('"')[1];
-    const error = splitMessage[1];
-    console.log(arg, error);
+
+    buttons[indexOfArg].id = "error";
+    icons[indexOfArg].className = "fa-solid fa-exclamation fa-sm";
+
+    indexOfArg++;
+    // const error = splitMessage[1];
+    console.log("fail: ", arg);
   });
 
-  // scrapingBot.on("close", (code) => {
-  //   console.log(`Process close with code: ${code}`);
-  // });
+  scrapingBot.on("close", (code) => {
+    while (indexOfArg != inputsValue.length) {
+      buttons[indexOfArg].id = "error";
+      icons[indexOfArg].className = "fa-solid fa-exclamation fa-sm";
+
+      indexOfArg++;
+    }
+    // location.reload();
+    // console.log(`Process close with code: ${code}`);
+  });
 }
 
 function addInput() {

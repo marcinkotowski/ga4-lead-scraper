@@ -51,9 +51,9 @@ dotenv.config();
 
       console.log(`"${leadList.length}" leads from the "${arg}" search result`);
 
-      googleMaps.bringToFront();
+      await googleMaps.bringToFront();
     } catch (err) {
-      console.error(`Failure scraping "${arg}" search result,\n ${err}`);
+      console.error(`Failure scraping of "${arg}" search result,\n ${err}`);
     }
   }
 
