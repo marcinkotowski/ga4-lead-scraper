@@ -1,9 +1,10 @@
 const { spawn } = require("child_process");
 
-const runButton = document.getElementById("run");
 const searchContainer = document.getElementById("search-container");
 let childrenCount = searchContainer.childElementCount;
 const addButton = document.getElementById("add");
+const botOptionContainer = document.getElementById("bot-option-container");
+const runButton = botOptionContainer.querySelector("#run");
 
 addButton.addEventListener("click", addInput);
 runButton.addEventListener("click", runScrapingBot);
@@ -41,10 +42,35 @@ function runScrapingBot() {
     cwd: "../bot/",
   });
 
+  const isTryAgain = botOptionContainer.querySelector("#clear");
+
+  if (!isTryAgain) {
+    botOptionContainer.removeChild(runButton);
+
+    var createdTryAgainButton = document.createElement("button");
+    createdTryAgainButton.className = "bot";
+    createdTryAgainButton.innerText = "Try again";
+
+    var createdClearInputButton = document.createElement("button");
+    createdClearInputButton.id = "clear";
+    createdClearInputButton.className = "bot";
+    createdClearInputButton.innerText = "Clear inputs";
+  } else {
+    var tryAgainButton = botOptionContainer.querySelector(".bot");
+    var clearInputButton = botOptionContainer.querySelector("#clear");
+    tryAgainButton.style.display = "none";
+    clearInputButton.style.display = "none";
+  }
+
+  const inProgressText = document.createElement("p");
+  inProgressText.innerText = "Scraping in progress";
+
+  botOptionContainer.appendChild(inProgressText);
+
   scrapingBot.stdout.on("data", (data) => {
     const splitMessage = Buffer.from(data).toString("utf8").split('"');
     const countLeads = parseInt(splitMessage[1]);
-    const searchKey = splitMessage[3];
+    // const searchKey = splitMessage[3];
 
     if (countLeads > 0) {
       buttons[indexOfArg].id = "success";
@@ -56,20 +82,18 @@ function runScrapingBot() {
 
     indexOfArg++;
 
-    console.log(`countLeads: ${countLeads}`);
-    console.log(`searchKey: ${searchKey}`);
+    // console.log(`countLeads: ${countLeads}`);
+    // console.log(`searchKey: ${searchKey}`);
   });
 
   scrapingBot.stderr.on("data", (data) => {
-    const splitMessage = Buffer.from(data).toString("utf8").split("\n");
-    const arg = splitMessage[0].split('"')[1];
+    // const splitMessage = Buffer.from(data).toString("utf8").split("\n");
+    // const arg = splitMessage[0].split('"')[1];
 
     buttons[indexOfArg].id = "error";
     icons[indexOfArg].className = "fa-solid fa-exclamation fa-sm";
 
     indexOfArg++;
-    // const error = splitMessage[1];
-    console.log("fail: ", arg);
   });
 
   scrapingBot.on("close", (code) => {
@@ -79,7 +103,24 @@ function runScrapingBot() {
 
       indexOfArg++;
     }
-    // location.reload();
+
+    botOptionContainer.removeChild(inProgressText);
+
+    if (!isTryAgain) {
+      botOptionContainer.appendChild(createdTryAgainButton);
+      botOptionContainer.appendChild(createdClearInputButton);
+
+      createdTryAgainButton.addEventListener("click", () => {
+        runScrapingBot();
+      });
+      createdClearInputButton.addEventListener("click", () => {
+        location.reload();
+      });
+    } else {
+      tryAgainButton.style.display = "block";
+      clearInputButton.style.display = "block";
+    }
+
     // console.log(`Process close with code: ${code}`);
   });
 }
