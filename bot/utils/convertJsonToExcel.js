@@ -6,5 +6,5 @@ export async function convertJsonToExcel(json, sheetName) {
 
   xlsx.utils.book_append_sheet(workBook, workSheet, sheetName);
 
-  xlsx.writeFile(workBook, `${sheetName}.xlsx`);
+  xlsx.writeFile(workBook, `./results/${sheetName}.xlsx`);
 }
