@@ -1,13 +1,21 @@
 const { spawn } = require("child_process");
+const { shell } = require("electron");
+const path = require("path");
 
 const searchContainer = document.getElementById("search-container");
 let childrenCount = searchContainer.childElementCount;
 const addButton = document.getElementById("add");
 const botOptionContainer = document.getElementById("bot-option-container");
 const runButton = botOptionContainer.querySelector("#run");
+const savedButton = document.getElementById("downloaded");
 
 addButton.addEventListener("click", addInput);
 runButton.addEventListener("click", runScrapingBot);
+
+savedButton.addEventListener("click", () => {
+  const savedPath = path.resolve(__dirname, "../../bot/", "results");
+  shell.openPath(savedPath);
+});
 
 searchContainer.addEventListener("click", (event) => {
   // Remove selected search-key div
