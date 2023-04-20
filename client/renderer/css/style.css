@@ -140,6 +140,7 @@ button i {
   border: 1px solid #2f333d;
   transition: 100ms;
   cursor: pointer;
+  position: relative;
 }
 
 .option-container p {
@@ -155,9 +156,23 @@ button i {
   color: #56d356;
 }
 
-#downloaded:hover {
+#saved:hover {
   /* border: 1px solid #7ee8d9; */
   color: #7ee8d9;
+}
+
+#new-files {
+  position: absolute;
+  background-color: #7ee8d9;
+  width: 14px;
+  height: 14px;
+  top: -7px;
+  left: -7px;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  color: #2f333d;
+  font-weight: bold;
+  display: none;
 }
 
 .bot {

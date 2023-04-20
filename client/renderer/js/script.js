@@ -1,5 +1,6 @@
 const { spawn } = require("child_process");
 const { shell } = require("electron");
+const { type } = require("os");
 const path = require("path");
 
 const searchContainer = document.getElementById("search-container");
@@ -7,13 +8,19 @@ let childrenCount = searchContainer.childElementCount;
 const addButton = document.getElementById("add");
 const botOptionContainer = document.getElementById("bot-option-container");
 const runButton = botOptionContainer.querySelector("#run");
-const savedButton = document.getElementById("downloaded");
+const savedButton = document.getElementById("saved");
 
 addButton.addEventListener("click", addInput);
 runButton.addEventListener("click", runScrapingBot);
 
+let unviewedFile = parseInt(localStorage.getItem("unviewedFile")) || 0;
+const newFilesDiv = document.getElementById("new-files");
+if (unviewedFile !== 0) newFilesDiv.style.display = "flex";
+
 savedButton.addEventListener("click", () => {
-  const savedPath = path.resolve(__dirname, "../../bot/", "results");
+  resetUnviewedFile();
+
+  const savedPath = path.join(__dirname, "../../bot/results/");
   shell.openPath(savedPath);
 });
 
@@ -25,13 +32,27 @@ searchContainer.addEventListener("click", (event) => {
   }
 });
 
+function resetUnviewedFile() {
+  unviewedFile = 0;
+  localStorage.setItem("unviewedFile", unviewedFile);
+  newFilesDiv.style.display = "none";
+}
+
+function newUnviewedFile() {
+  unviewedFile = 1;
+  localStorage.setItem("unviewedFile", unviewedFile);
+  newFilesDiv.style.display = "flex";
+}
+
+let lastSucceedScrap = 0;
+
 function runScrapingBot() {
   const searchKeys = Array.from(document.querySelectorAll(".search-key"));
 
+  /* Destructure searchKeys DOM element */
   let inputsValue = [];
   let buttons = [];
   let icons = [];
-  let indexOfArg = 0;
 
   searchKeys.forEach((searchKey) => {
     const inputValue = searchKey.querySelector("input").value;
@@ -75,33 +96,39 @@ function runScrapingBot() {
 
   botOptionContainer.appendChild(inProgressText);
 
+  let indexOfArg = 0;
+  let currentSucceedScrap = 0;
+
   scrapingBot.stdout.on("data", (data) => {
     const splitMessage = Buffer.from(data).toString("utf8").split('"');
     const countLeads = parseInt(splitMessage[1]);
+    // console.log("stdout", splitMessage);
     // const searchKey = splitMessage[3];
 
     if (countLeads > 0) {
       buttons[indexOfArg].id = "success";
       icons[indexOfArg].className = "fa-solid fa-check fa-sm";
+
+      currentSucceedScrap++;
     } else {
       buttons[indexOfArg].id = "empty";
       icons[indexOfArg].className = "fa-solid fa-shop-slash fa-sm";
     }
 
     indexOfArg++;
-
     // console.log(`countLeads: ${countLeads}`);
     // console.log(`searchKey: ${searchKey}`);
   });
 
   scrapingBot.stderr.on("data", (data) => {
-    // const splitMessage = Buffer.from(data).toString("utf8").split("\n");
-    // const arg = splitMessage[0].split('"')[1];
+    const splitMessage = Buffer.from(data).toString("utf8").split("\n");
+    const arg = splitMessage[0].split('"')[1];
+    // console.log("stderr", splitMessage);
 
     buttons[indexOfArg].id = "error";
     icons[indexOfArg].className = "fa-solid fa-exclamation fa-sm";
 
-    indexOfArg++;
+    if (arg) indexOfArg++;
   });
 
   scrapingBot.on("close", (code) => {
@@ -123,11 +150,22 @@ function runScrapingBot() {
       });
       createdClearInputButton.addEventListener("click", () => {
         location.reload();
+        lastSucceedScrap = 0;
       });
+
+      if (currentSucceedScrap !== 0) newUnviewedFile();
     } else {
+      if (unviewedFile === 0 && currentSucceedScrap !== 0) {
+        newUnviewedFile();
+      } else if (currentSucceedScrap > lastSucceedScrap) {
+        newUnviewedFile();
+      }
+
       tryAgainButton.style.display = "block";
       clearInputButton.style.display = "block";
     }
+
+    lastSucceedScrap = currentSucceedScrap;
 
     // console.log(`Process close with code: ${code}`);
   });
