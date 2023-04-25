@@ -5,13 +5,14 @@ const isDev = process.env.NODE_ENV !== "development";
 
 function createWindow() {
   const win = new BrowserWindow({
-    title: "Google maps lead scrapper",
+    title: "Google analytics 4 lead scraping app",
     width: isDev ? 1000 : 500,
     height: 500,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
     },
+    icon: path.join(__dirname, "icon.ico"),
   });
 
   // Disable menu
