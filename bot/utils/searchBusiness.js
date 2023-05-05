@@ -2,11 +2,19 @@ import puppeteer from "puppeteer-core";
 
 export async function searchBusiness(arg, page) {
   try {
-    await page.evaluate((searchKey) => {
-      const searchInput = document.querySelector("input#searchboxinput");
-      searchInput.value = searchKey;
-      searchInput.focus();
-    }, arg);
+    await page.waitForSelector("input#searchboxinput");
+
+    const searchInput = await page.$("input#searchboxinput");
+
+    await page.evaluate(
+      (searchInput, arg) => {
+        searchInput.value = arg;
+      },
+      searchInput,
+      arg
+    );
+
+    searchInput.click();
 
     const searchButton = await page.$("button#searchbox-searchbutton");
 
