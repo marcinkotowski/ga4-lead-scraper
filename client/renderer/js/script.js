@@ -19,8 +19,17 @@ if (unviewedFile !== 0) newFilesDiv.style.display = "flex";
 
 savedButton.addEventListener("click", () => {
   resetUnviewedFile();
+  const isDev = process.env.NODE_ENV === "development";
+  let savedPath = "";
 
-  const savedPath = path.join(__dirname, "../../bot/results/");
+  // Production
+  if (!isDev) {
+    savedPath = path.join(__dirname, "../../../../results");
+  }
+  // Development
+  else {
+    savedPath = path.join(__dirname, "../../results/");
+  }
 
   if (fs.existsSync(savedPath)) {
     shell.openPath(savedPath);
@@ -142,7 +151,7 @@ function runScrapingBot() {
   scrapingBot.stderr.on("data", (data) => {
     const splitMessage = Buffer.from(data).toString("utf8");
     // const arg = splitMessage[0].split('"')[1];
-    console.log("stderr", splitMessage);
+    // console.log("stderr", splitMessage);
 
     buttons[indexOfArg].id = "error";
     icons[indexOfArg].className = "fa-solid fa-exclamation fa-sm";

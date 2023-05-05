@@ -14,8 +14,8 @@ async function convertJsonToExcel(json, sheetName) {
 
   // Production
   if (IsSpawn && !isDev) {
-    savedPath = "../../results";
-    writePath = `../../results/${sheetName}.xlsx`;
+    savedPath = "../../../results";
+    writePath = `../../../results/${sheetName}.xlsx`;
   }
   // Develompent with electron app
   else if (IsSpawn && isDev) {
