@@ -1,11 +1,11 @@
 const { app, BrowserWindow, Menu } = require("electron");
 const path = require("path");
 
-const isDev = process.env.NODE_ENV !== "development";
+const isDev = process.env.NODE_ENV === "development";
 
 function createWindow() {
   const win = new BrowserWindow({
-    title: "Google analytics 4 lead scraping app",
+    title: "Google analytics 4 leads scraper",
     width: isDev ? 1000 : 500,
     height: 500,
     webPreferences: {
