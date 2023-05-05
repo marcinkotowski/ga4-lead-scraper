@@ -1,6 +1,6 @@
-import puppeteer from "puppeteer-core";
+const puppeteer = require("puppeteer-core");
 
-export async function scrapBusiness(business, page) {
+async function scrapBusiness(business, page) {
   try {
     const BusinessData = {
       name: "",
@@ -39,3 +39,7 @@ export async function scrapBusiness(business, page) {
     throw new Error(`Error in scrapBusiness function: ${err}`);
   }
 }
+
+module.exports = {
+  scrapBusiness,
+};

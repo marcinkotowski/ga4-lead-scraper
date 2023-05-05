@@ -1,10 +1,12 @@
-import xlsx from "xlsx";
+const xlsx = require("xlsx");
 
-export async function convertJsonToExcel(json, sheetName) {
+async function convertJsonToExcel(json, sheetName) {
   const workBook = xlsx.utils.book_new();
   const workSheet = xlsx.utils.json_to_sheet(json);
 
   xlsx.utils.book_append_sheet(workBook, workSheet, sheetName);
-
-  xlsx.writeFile(workBook, `./results/${sheetName}.xlsx`);
 }
+
+module.exports = {
+  convertJsonToExcel,
+};

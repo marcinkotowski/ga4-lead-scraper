@@ -1,14 +1,13 @@
-import puppeteer from "puppeteer-core";
-import { infiniteScrollItems } from "./utils/scroll.js";
-import { iteratorBusinesses } from "./utils/iteratorBusinesses.js";
-import { checkGA4 } from "./utils/checkGoogleTag.js";
-import { searchBusiness } from "./utils/searchBusiness.js";
-import { cancelCookies } from "./utils/cancelCookies.js";
-import { convertJsonToExcel } from "./utils/convertJsonToExcel.js";
+const puppeteer = require("puppeteer-core");
+const { infiniteScrollItems } = require("./utils/scroll.js");
+const { iteratorBusinesses } = require("./utils/iteratorBusinesses.js");
+const { checkGA4 } = require("./utils/checkGoogleTag.js");
+const { searchBusiness } = require("./utils/searchBusiness.js");
+const { cancelCookies } = require("./utils/cancelCookies.js");
+const { convertJsonToExcel } = require("./utils/convertJsonToExcel.js");
 
 // Config chrome environment variables
-import * as dotenv from "dotenv";
-dotenv.config();
+require("dotenv").config();
 
 (async () => {
   const browser = await puppeteer.launch({

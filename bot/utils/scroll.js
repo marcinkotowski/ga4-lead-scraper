@@ -1,6 +1,6 @@
-import { TimeoutError } from "puppeteer-core";
+const { TimeoutError } = require("puppeteer-core");
 
-export async function infiniteScrollItems(scrollableSelector, page) {
+async function infiniteScrollItems(scrollableSelector, page) {
   try {
     await page.waitForSelector(scrollableSelector);
     const divHandle = await page.$(scrollableSelector);
@@ -33,7 +33,7 @@ export async function infiniteScrollItems(scrollableSelector, page) {
   }
 }
 
-export async function scrollAndRemove(selector, page) {
+async function scrollAndRemove(selector, page) {
   // Wait for first google maps results
   try {
     await page.waitForSelector(selector, { timeout: 5000 });
@@ -49,3 +49,8 @@ export async function scrollAndRemove(selector, page) {
     }
   }
 }
+
+module.exports = {
+  infiniteScrollItems,
+  scrollAndRemove,
+};

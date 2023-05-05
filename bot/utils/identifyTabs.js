@@ -1,4 +1,4 @@
-export async function indentifyTabs(pages) {
+async function indentifyTabs(pages) {
   try {
     let indexGoogleTagAssistant;
     let indexMapPage;
@@ -21,3 +21,7 @@ export async function indentifyTabs(pages) {
     throw new Error(`Error in indentifyTabs function: ${err}`);
   }
 }
+
+module.exports = {
+  indentifyTabs,
+};

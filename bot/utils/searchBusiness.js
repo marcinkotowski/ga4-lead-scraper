@@ -1,9 +1,9 @@
-import puppeteer from "puppeteer-core";
+const puppeteer = require("puppeteer-core");
 
-export async function searchBusiness(arg, page) {
+async function searchBusiness(arg, page) {
   try {
+    await page.waitForNetworkIdle();
     await page.waitForSelector("input#searchboxinput");
-
     const searchInput = await page.$("input#searchboxinput");
 
     await page.evaluate(
@@ -14,10 +14,11 @@ export async function searchBusiness(arg, page) {
       arg
     );
 
-    searchInput.click();
+    searchInput.focus();
 
     const searchButton = await page.$("button#searchbox-searchbutton");
 
+    await searchButton.click();
     await searchButton.click();
 
     await page.waitForNetworkIdle();
@@ -25,3 +26,7 @@ export async function searchBusiness(arg, page) {
     throw new Error(`Error in searchBusiness function: ${err}`);
   }
 }
+
+module.exports = {
+  searchBusiness,
+};

@@ -1,6 +1,6 @@
-import axios from "axios";
+const axios = require("axios");
 
-export default async function getBrowserWSEndpoint() {
+async function getBrowserWSEndpoint() {
   try {
     const response = await axios.get("http://127.0.0.1:9222/json/version");
     const { webSocketDebuggerUrl } = response.data;
@@ -9,3 +9,7 @@ export default async function getBrowserWSEndpoint() {
     throw new Error(`Error in getBrowserWSEndpoint function: ${err}`);
   }
 }
+
+module.exports = {
+  getBrowserWSEndpoint,
+};

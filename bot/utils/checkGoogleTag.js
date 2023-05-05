@@ -1,6 +1,6 @@
-import { TimeoutError } from "puppeteer-core";
+const { TimeoutError } = require("puppeteer-core");
 
-export async function checkGA4(website, browser) {
+async function checkGA4(website, browser) {
   try {
     const page = await browser.newPage();
 
@@ -30,3 +30,7 @@ export async function checkGA4(website, browser) {
     }
   }
 }
+
+module.exports = {
+  checkGA4,
+};

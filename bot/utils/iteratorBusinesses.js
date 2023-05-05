@@ -1,7 +1,7 @@
-import puppeteer from "puppeteer-core";
-import { scrapBusiness } from "./scrapBusiness.js";
+const puppeteer = require("puppeteer-core");
+const { scrapBusiness } = require("./scrapBusiness.js");
 
-export async function iteratorBusinesses(scrapSelector, page) {
+async function iteratorBusinesses(scrapSelector, page) {
   let bussinessList = [];
 
   try {
@@ -27,7 +27,7 @@ export async function iteratorBusinesses(scrapSelector, page) {
   }
 }
 
-export async function iteratorBusinessesOnEveryScroll(itemsList) {
+async function iteratorBusinessesOnEveryScroll(itemsList) {
   try {
     // Fetch all search result business
     const businessList = await page.evaluate((scrapSelector) => {
@@ -49,3 +49,8 @@ export async function iteratorBusinessesOnEveryScroll(itemsList) {
     );
   }
 }
+
+module.exports = {
+  iteratorBusinesses,
+  iteratorBusinessesOnEveryScroll,
+};
