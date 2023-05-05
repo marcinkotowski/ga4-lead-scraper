@@ -1,7 +1,7 @@
 const { spawn } = require("child_process");
 const { shell } = require("electron");
-const { type } = require("os");
 const path = require("path");
+const fs = require("fs");
 
 const searchContainer = document.getElementById("search-container");
 let childrenCount = searchContainer.childElementCount;
@@ -21,7 +21,12 @@ savedButton.addEventListener("click", () => {
   resetUnviewedFile();
 
   const savedPath = path.join(__dirname, "../../bot/results/");
-  shell.openPath(savedPath);
+
+  if (fs.existsSync(savedPath)) {
+    shell.openPath(savedPath);
+  } else {
+    fs.mkdirSync(savedPath);
+  }
 });
 
 searchContainer.addEventListener("click", (event) => {
@@ -67,8 +72,22 @@ function runScrapingBot() {
     icons.push(icon);
   });
 
-  const scrapingBot = spawn("node", ["../bot/index.js", ...inputsValue], {
-    cwd: "../bot/",
+  const isDev = process.env.NODE_ENV === "development";
+
+  const scraperPath = isDev ? "./index.js" : "./index.js";
+  const cwdPath = isDev
+    ? path.join(__dirname, "../../bot")
+    : path.join(__dirname, "../../bot");
+
+  console.log(scraperPath);
+  console.log(cwdPath);
+
+  const scrapingBot = spawn("node", [scraperPath, ...inputsValue], {
+    cwd: cwdPath,
+    env: {
+      IS_SPAWN: true,
+      NODE_ENV: process.env.NODE_ENV,
+    },
   });
 
   const isTryAgain = botOptionContainer.querySelector("#clear");
@@ -121,9 +140,9 @@ function runScrapingBot() {
   });
 
   scrapingBot.stderr.on("data", (data) => {
-    const splitMessage = Buffer.from(data).toString("utf8").split("\n");
-    const arg = splitMessage[0].split('"')[1];
-    // console.log("stderr", splitMessage);
+    const splitMessage = Buffer.from(data).toString("utf8");
+    // const arg = splitMessage[0].split('"')[1];
+    console.log("stderr", splitMessage);
 
     buttons[indexOfArg].id = "error";
     icons[indexOfArg].className = "fa-solid fa-exclamation fa-sm";
