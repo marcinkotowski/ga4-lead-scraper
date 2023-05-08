@@ -1,8 +1,10 @@
 const { TimeoutError } = require("puppeteer-core");
 
 async function checkGA4(website, browser) {
+  let page = null;
+
   try {
-    const page = await browser.newPage();
+    page = await browser.newPage();
 
     await page.goto(`http://${website}`, {
       waitUntil: "networkidle0",
@@ -16,8 +18,6 @@ async function checkGA4(website, browser) {
       );
     });
 
-    await page.close();
-
     return hasGA4;
   } catch (err) {
     if (err instanceof TimeoutError) {
@@ -27,6 +27,10 @@ async function checkGA4(website, browser) {
 
       // True means that it's not a lead
       return true;
+    }
+  } finally {
+    if (page) {
+      await page.close();
     }
   }
 }
