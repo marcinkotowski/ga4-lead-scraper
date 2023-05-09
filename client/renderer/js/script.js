@@ -88,9 +88,6 @@ function runScrapingBot() {
     ? path.join(__dirname, "../../bot")
     : path.join(__dirname, "../../bot");
 
-  console.log(scraperPath);
-  console.log(cwdPath);
-
   const scrapingBot = spawn("node", [scraperPath, ...inputsValue], {
     cwd: cwdPath,
     env: {
@@ -128,9 +125,10 @@ function runScrapingBot() {
   let currentSucceedScrap = 0;
 
   scrapingBot.stdout.on("data", (data) => {
-    const splitMessage = Buffer.from(data).toString("utf8").split('"');
+    const stdoutMessage = Buffer.from(data).toString("utf8");
+    const splitMessage = stdoutMessage.split('"');
     const countLeads = parseInt(splitMessage[1]);
-    // console.log("stdout", splitMessage);
+    console.log(stdoutMessage);
     // const searchKey = splitMessage[3];
 
     if (countLeads > 0) {
@@ -149,14 +147,14 @@ function runScrapingBot() {
   });
 
   scrapingBot.stderr.on("data", (data) => {
-    const splitMessage = Buffer.from(data).toString("utf8");
-    // const arg = splitMessage[0].split('"')[1];
-    // console.log("stderr", splitMessage);
+    const stderrMessage = Buffer.from(data).toString("utf8");
+    console.log(stderrMessage);
+    // const arg = stderrMessage[0].split('"')[1];
 
     buttons[indexOfArg].id = "error";
     icons[indexOfArg].className = "fa-solid fa-exclamation fa-sm";
 
-    if (arg) indexOfArg++;
+    if (stderrMessage) indexOfArg++;
   });
 
   scrapingBot.on("close", (code) => {
