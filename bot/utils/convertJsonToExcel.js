@@ -3,7 +3,13 @@ const fs = require("fs");
 
 async function convertJsonToExcel(json, sheetName) {
   const workbook = new ExcelJS.Workbook();
+
+  // Name sheet and ignore 31 character limit warn
+  const originalConsoleWarn = console.warn;
+  console.warn = function () {};
   const worksheet = workbook.addWorksheet(sheetName);
+  console.warn = originalConsoleWarn;
+
   worksheet.addRows(json);
 
   const IsSpawn = process.env.IS_SPAWN === "true";
