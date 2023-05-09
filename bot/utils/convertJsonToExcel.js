@@ -1,11 +1,10 @@
-const xlsx = require("xlsx");
+const ExcelJS = require("exceljs");
 const fs = require("fs");
 
 async function convertJsonToExcel(json, sheetName) {
-  const workBook = xlsx.utils.book_new();
-  const workSheet = xlsx.utils.json_to_sheet(json);
-
-  xlsx.utils.book_append_sheet(workBook, workSheet, sheetName);
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet(sheetName);
+  worksheet.addRows(json);
 
   const IsSpawn = process.env.IS_SPAWN === "true";
   const isDev = process.env.NODE_ENV === "development";
@@ -32,7 +31,11 @@ async function convertJsonToExcel(json, sheetName) {
     fs.mkdirSync(savedPath);
   }
 
-  xlsx.writeFile(workBook, writePath);
+  try {
+    await workbook.xlsx.writeFile(writePath);
+  } catch (error) {
+    throw new Error(`Error in convertJsonToExcel function: ${err}`);
+  }
 }
 
 module.exports = {
