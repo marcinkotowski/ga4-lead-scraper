@@ -10,6 +10,24 @@ async function convertJsonToExcel(json, sheetName) {
   const worksheet = workbook.addWorksheet(sheetName);
   console.warn = originalConsoleWarn;
 
+  worksheet.columns = [
+    {
+      header: "Business",
+      key: "name",
+      width: 60,
+    },
+    {
+      header: "Website",
+      key: "website",
+      width: 30,
+    },
+    {
+      header: "Phone number",
+      key: "phone",
+      width: 30,
+    },
+  ];
+
   worksheet.addRows(json);
 
   const IsSpawn = process.env.IS_SPAWN === "true";
