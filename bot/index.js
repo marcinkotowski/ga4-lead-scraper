@@ -1,13 +1,21 @@
 const puppeteer = require("puppeteer-core");
+const { program } = require("commander");
 const { infiniteScrollItems } = require("./utils/scroll.js");
 const { iteratorBusinesses } = require("./utils/iteratorBusinesses.js");
-const { checkGA4 } = require("./utils/checkGoogleTag.js");
+const { checkGA4, checkSFDC } = require("./utils/checkTools.js");
 const { searchBusiness } = require("./utils/searchBusiness.js");
 const { cancelCookies } = require("./utils/cancelCookies.js");
 const { convertJsonToExcel } = require("./utils/convertJsonToExcel.js");
 
 // Config chrome environment variables
 require("dotenv").config();
+
+// Config command line options
+program.option("-ga4, --googleanalytics4").option("-sfdc, --salesforce");
+
+program.parse();
+
+const options = program.opts();
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -23,7 +31,8 @@ require("dotenv").config();
 
   await cancelCookies(googleMaps);
 
-  const args = process.argv.slice(2) || [];
+  let ignoreArgs = 2 + Object.keys(options).length;
+  const args = process.argv.slice(ignoreArgs) || [];
 
   for (const arg of args) {
     try {
@@ -39,10 +48,25 @@ require("dotenv").config();
       let leadList = [];
 
       for (const business of businessList) {
-        const hasGA4 = await checkGA4(business.website, browser);
+        if (options.hasOwnProperty("googleanalytics4")) {
+          const hasGA4 = await checkGA4(business.website, browser);
 
-        if (!hasGA4) {
-          leadList.push(business);
+          if (!hasGA4) {
+            leadList.push(business);
+          }
+        } else if (options.hasOwnProperty("salesforce")) {
+          const hasSFDC = await checkSFDC(business.website, browser);
+
+          if (hasSFDC) {
+            leadList.push(business);
+          }
+        } else {
+          // Scrap GA4 leads by default
+          const hasGA4 = await checkGA4(business.website, browser);
+
+          if (!hasGA4) {
+            leadList.push(business);
+          }
         }
       }
 
