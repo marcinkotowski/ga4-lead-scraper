@@ -11,11 +11,10 @@ async function checkGA4(website, browser) {
     });
 
     const hasGA4 = await page.evaluate(() => {
-      const scripts = Array.from(document.querySelectorAll("script[src]"));
-      return scripts.some(
-        (script) =>
-          script.src.includes("gtag/js") && script.src.includes("id=G")
+      const scripts = Array.from(
+        document.querySelectorAll("script[src*='gtag/js']")
       );
+      return scripts.some((script) => script.src.includes("id=G"));
     });
 
     return hasGA4;
@@ -39,6 +38,7 @@ async function checkSFDC(website, browser) {
 
   try {
     page = await browser.newPage();
+    await page.waitForNetworkIdle();
 
     await page.goto(`http://${website}`, {
       waitUntil: "networkidle0",
@@ -67,7 +67,42 @@ async function checkSFDC(website, browser) {
   }
 }
 
+async function checkGADS(website, browser) {
+  let page = null;
+
+  try {
+    page = await browser.newPage();
+
+    await page.goto(`http://${website}`, {
+      waitUntil: "networkidle0",
+    });
+
+    const hasGADS = await page.evaluate(() => {
+      const scripts = Array.from(
+        document.querySelectorAll("script[src*='gtag/js']")
+      );
+      return scripts.some(
+        (script) => script.src.includes("id=AW") || script.src.match(/id=(\d+)/)
+      );
+    });
+
+    return hasGADS;
+  } catch (err) {
+    if (err instanceof TimeoutError) {
+      // console.error(`${website} took too long to load`);
+    } else {
+      // console.error(`${website} generate error: ${err}`);
+    }
+    return false;
+  } finally {
+    if (page) {
+      await page.close();
+    }
+  }
+}
+
 module.exports = {
   checkGA4,
   checkSFDC,
+  checkGADS,
 };

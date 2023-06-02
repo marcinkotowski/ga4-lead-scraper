@@ -2,7 +2,7 @@ const puppeteer = require("puppeteer-core");
 const { program } = require("commander");
 const { infiniteScrollItems } = require("./utils/scroll.js");
 const { iteratorBusinesses } = require("./utils/iteratorBusinesses.js");
-const { checkGA4, checkSFDC } = require("./utils/checkTools.js");
+const { checkGA4, checkSFDC, checkGADS } = require("./utils/checkTools.js");
 const { searchBusiness } = require("./utils/searchBusiness.js");
 const { cancelCookies } = require("./utils/cancelCookies.js");
 const { convertJsonToExcel } = require("./utils/convertJsonToExcel.js");
@@ -11,7 +11,10 @@ const { convertJsonToExcel } = require("./utils/convertJsonToExcel.js");
 require("dotenv").config();
 
 // Config command line options
-program.option("-ga4, --googleanalytics4").option("-sfdc, --salesforce");
+program
+  .option("-ga4, --googleanalytics4")
+  .option("-sfdc, --salesforce")
+  .option("-gads, --googleads");
 
 program.parse();
 
@@ -60,6 +63,11 @@ const options = program.opts();
           if (hasSFDC) {
             leadList.push(business);
           }
+        } else if (options.hasOwnProperty("googleads")) {
+          const hasGADS = await checkGADS(business.website, browser);
+
+          business.hasGADS = hasGADS;
+          leadList.push(business);
         } else {
           // Scrap GA4 leads by default
           const hasGA4 = await checkGA4(business.website, browser);
@@ -70,7 +78,7 @@ const options = program.opts();
         }
       }
 
-      if (leadList.length > 0) await convertJsonToExcel(leadList, arg);
+      if (leadList.length > 0) await convertJsonToExcel(leadList, arg, options);
 
       console.log(`"${leadList.length}" leads from the "${arg}" search result`);
 
