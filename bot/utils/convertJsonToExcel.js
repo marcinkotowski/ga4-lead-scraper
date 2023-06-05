@@ -31,7 +31,7 @@ async function convertJsonToExcel(json, sheetName, options) {
   ];
 
   if (options.hasOwnProperty("googleads")) {
-    extraWorkbook.columns = [
+    extraWorksheet.columns = [
       {
         header: "Business",
         key: "name",
