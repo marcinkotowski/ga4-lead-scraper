@@ -98,12 +98,11 @@ async function convertJsonToExcel(json, sheetName, options) {
       fs.mkdirSync(`${savedPath}/GADS/not-contain`);
     }
 
-    if (containGA4.length > 0) {
+    if (containGA4.length > 0)
       writePath = `${savedPath}/GADS/contain/${sheetName}.xlsx`;
-      console.log(writePath);
-    } else if (notContainGA4.length > 0) {
+
+    if (notContainGA4.length > 0)
       extraWritePath = `${savedPath}/GADS/not-contain/${sheetName}.xlsx`;
-    }
 
     worksheet.addRows(containGA4);
     extraWorksheet.addRows(notContainGA4);
