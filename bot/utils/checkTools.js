@@ -67,13 +67,13 @@ async function checkSFDC(website, browser) {
   }
 }
 
-async function checkGADS(website, browser) {
+async function checkGADS(business, browser) {
   let page = null;
 
   try {
     page = await browser.newPage();
 
-    await page.goto(`http://${website}`, {
+    await page.goto(`http://${business.website}`, {
       waitUntil: "networkidle0",
     });
 
@@ -82,18 +82,21 @@ async function checkGADS(website, browser) {
         document.querySelectorAll("script[src*='gtag/js']")
       );
       return scripts.some(
-        (script) => script.src.includes("id=AW") || script.src.match(/id=(\d+)/)
+        (script) =>
+          script.src.includes("id=AW") ||
+          script.src.match(/id=(\d+)/) ||
+          script.src.includes("googleads") ||
+          script.src.includes("doubleclick")
       );
     });
 
-    return hasGADS;
+    return (business.hasGADS = hasGADS);
   } catch (err) {
     if (err instanceof TimeoutError) {
-      // console.error(`${website} took too long to load`);
+      // console.error(`${business.website} took too long to load`);
     } else {
-      // console.error(`${website} generate error: ${err}`);
+      // console.error(`${business.website} generate error: ${err}`);
     }
-    return false;
   } finally {
     if (page) {
       await page.close();

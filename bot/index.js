@@ -64,10 +64,11 @@ const options = program.opts();
             leadList.push(business);
           }
         } else if (options.hasOwnProperty("googleads")) {
-          const hasGADS = await checkGADS(business.website, browser);
+          const hasGADS = await checkGADS(business, browser);
 
-          business.hasGADS = hasGADS;
-          leadList.push(business);
+          if (hasGADS !== undefined) {
+            leadList.push(business);
+          }
         } else {
           // Scrap GA4 leads by default
           const hasGA4 = await checkGA4(business.website, browser);
