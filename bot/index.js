@@ -78,14 +78,13 @@ const options = program.opts();
           }
         }
       }
-
       if (leadList.length > 0) await convertJsonToExcel(leadList, arg, options);
 
       console.log(`"${leadList.length}" leads from the "${arg}" search result`);
-
-      await googleMaps.bringToFront();
     } catch (err) {
       console.error(`Failure scraping of "${arg}" search result,\n ${err}`);
+    } finally {
+      await googleMaps.bringToFront();
     }
   }
 
