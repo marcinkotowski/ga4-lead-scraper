@@ -10,12 +10,17 @@ async function checkGA4(website, browser) {
       waitUntil: "networkidle0",
     });
 
-    const hasGA4 = await page.evaluate(() => {
-      const scripts = Array.from(
-        document.querySelectorAll("script[src*='gtag/js']")
-      );
-      return scripts.some((script) => script.src.includes("id=G"));
-    });
+    let hasGA4;
+    for (let i = 0; i < 2; i++) {
+      hasGA4 = await page.evaluate(() => {
+        const scripts = Array.from(
+          document.querySelectorAll("script[src*='gtag/js']")
+        );
+        return scripts.some((script) => script.src.includes("id=G"));
+      });
+      if (hasGA4) break;
+      await page.waitForTimeout(4000);
+    }
 
     return hasGA4;
   } catch (err) {
@@ -44,13 +49,18 @@ async function checkSFDC(website, browser) {
       waitUntil: "networkidle0",
     });
 
-    const hasSFDC = await page.evaluate(() => {
-      const scripts = Array.from(document.querySelectorAll("script"));
+    let hasSFDC;
+    for (let i = 0; i < 2; i++) {
+      hasSFDC = await page.evaluate(() => {
+        const scripts = Array.from(document.querySelectorAll("script"));
 
-      return scripts.some((script) =>
-        script.textContent.includes("salesforce")
-      );
-    });
+        return scripts.some((script) =>
+          script.textContent.includes("salesforce")
+        );
+      });
+      if (hasSFDC) break;
+      await page.waitForTimeout(4000);
+    }
 
     return hasSFDC;
   } catch (err) {
@@ -77,21 +87,28 @@ async function checkGADS(business, browser) {
       waitUntil: "networkidle0",
     });
 
-    const hasGADS = await page.evaluate(() => {
-      const scripts = Array.from(document.querySelectorAll("script[src]"));
-      if (scripts.length > 0) {
-        return scripts.some((script) => {
-          if (script.src.includes("gtag/js")) {
-            return script.src.includes("id=AW") || script.src.match(/id=(\d+)/);
-          } else {
-            return (
-              script.src.includes("googleads") ||
-              script.src.includes("doubleclick")
-            );
-          }
-        });
-      }
-    });
+    let hasGADS;
+    for (let i = 0; i < 2; i++) {
+      hasGADS = await page.evaluate(() => {
+        const scripts = Array.from(document.querySelectorAll("script[src]"));
+        if (scripts.length > 0) {
+          return scripts.some((script) => {
+            if (script.src.includes("gtag/js")) {
+              return (
+                script.src.includes("id=AW") || script.src.match(/id=(\d+)/)
+              );
+            } else {
+              return (
+                script.src.includes("googleads") ||
+                script.src.includes("doubleclick")
+              );
+            }
+          });
+        }
+      });
+      if (hasGADS) break;
+      await page.waitForTimeout(4000);
+    }
 
     return (business.hasGADS = hasGADS);
   } catch (err) {
@@ -102,7 +119,7 @@ async function checkGADS(business, browser) {
     }
   } finally {
     if (page) {
-      // await page.close();
+      await page.close();
     }
   }
 }
