@@ -78,16 +78,19 @@ async function checkGADS(business, browser) {
     });
 
     const hasGADS = await page.evaluate(() => {
-      const scripts = Array.from(
-        document.querySelectorAll("script[src*='gtag/js']")
-      );
-      return scripts.some(
-        (script) =>
-          script.src.includes("id=AW") ||
-          script.src.match(/id=(\d+)/) ||
-          script.src.includes("googleads") ||
-          script.src.includes("doubleclick")
-      );
+      const scripts = Array.from(document.querySelectorAll("script[src]"));
+      if (scripts.length > 0) {
+        return scripts.some((script) => {
+          if (script.src.includes("gtag/js")) {
+            return script.src.includes("id=AW") || script.src.match(/id=(\d+)/);
+          } else {
+            return (
+              script.src.includes("googleads") ||
+              script.src.includes("doubleclick")
+            );
+          }
+        });
+      }
     });
 
     return (business.hasGADS = hasGADS);
@@ -99,7 +102,7 @@ async function checkGADS(business, browser) {
     }
   } finally {
     if (page) {
-      await page.close();
+      // await page.close();
     }
   }
 }
